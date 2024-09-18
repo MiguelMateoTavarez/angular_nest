@@ -1,5 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-register-page',
@@ -8,7 +11,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class RegisterPageComponent {
 
-  private fb = inject(FormBuilder);
+  private fb          = inject(FormBuilder);
+  private authService = inject(AuthService);
+  private router    = inject(Router);
 
   public myForm: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(4)]],
@@ -25,8 +30,15 @@ export class RegisterPageComponent {
       ? null : { passwordMismatch: true };
   }
 
-  submit(){
-    console.log(this.myForm.value);
+  register(){
+    this.authService.register(this.myForm.value)
+      .subscribe({
+        next: () => this.router.navigateByUrl('/dashboard'),
+        error: (message) => {
+          console.log(message);
+          Swal.fire('Error', message, 'error');
+        }
+      })
   }
 
 }

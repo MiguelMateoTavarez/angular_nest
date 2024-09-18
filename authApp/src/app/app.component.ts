@@ -10,8 +10,10 @@ import { Router } from '@angular/router';
 })
 export class AppComponent {
   title = 'authApp';
+
   private authService = inject(AuthService);
   private router = inject(Router);
+
   public finishedAuthCheck = computed<boolean>(() => {
     if(this.authService.authStatus() === AuthStatus.checking) return false;
     return true;
